@@ -59,7 +59,7 @@ public class Tools2021 : MonoBehaviour
             {
                 _input = webRequest.downloadHandler.text.TrimEnd('\n');
                 
-                Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
             }
         }
         _isProcessing = false;

@@ -72,9 +72,9 @@ public class DayScript : MonoBehaviour
             Debug.LogWarning("[Day " + _day.ToString() + "] Part 2 result is : " + result);
         }
 
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForSeconds(5f);
-        UnityEditor.EditorApplication.isPlaying = false;
+        //yield return new WaitForEndOfFrame();
+        //yield return new WaitForSeconds(5f);
+        //UnityEditor.EditorApplication.isPlaying = false;
     }
 
     protected virtual string part_1() { Debug.LogError("[" + this.GetType().ToString() + "] part_1 is not defined"); return "N/A"; }
