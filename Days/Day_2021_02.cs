@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Day_2021_02 : DayScript
 {
+
     protected override string part_1()
     {
         int depth = 0, pos = 0;
@@ -37,6 +38,7 @@ public class Day_2021_02 : DayScript
                 }
             }
         }
+        Debug.LogWarning("Final pos are " + pos + ", depth " + depth);
 
         return (depth * pos).ToString();
     }

@@ -9,6 +9,10 @@ public class DayScript : MonoBehaviour
     public bool Part1 = true;
     public bool Part2 = false;
 
+    public bool AnimPart1 = false;
+    public bool AnimPart2 = false;
+    public DayAnimationScript animationScript;
+
     protected string _input;
     protected int _day
     {
@@ -18,6 +22,10 @@ public class DayScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (animationScript != null)
+        {
+            animationScript.gameObject.SetActive(false);
+        }
         StartCoroutine(coDay());
     }
 
@@ -70,6 +78,33 @@ public class DayScript : MonoBehaviour
                 Debug.Log(log);
 
             Debug.LogWarning("[Day " + _day.ToString() + "] Part 2 result is : " + result);
+        }
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        if (animationScript != null)
+        {
+            animationScript.input = _input;
+            if (AnimPart1)
+            {
+                animationScript.gameObject.SetActive(true);
+               
+                Debug.Log("[Day " + _day.ToString() + "] Starting Anim Part 1");
+
+                yield return animationScript.part_1();
+
+                yield return new WaitForSeconds(1f);
+            }
+
+            if (AnimPart2)
+            {
+                animationScript.gameObject.SetActive(true);
+
+                Debug.Log("[Day " + _day.ToString() + "] Starting Anim Part 2");
+
+                yield return animationScript.part_2();
+            }
         }
 
         //yield return new WaitForEndOfFrame();
