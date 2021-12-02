@@ -10,6 +10,8 @@ public class Day_2021_02_Anim : DayAnimationScript
 
     public override IEnumerator part_2()
     {
+        int cycles = 20;
+
         //Init
         Submarine.anchorMin = new Vector2(0, 1f);
         Submarine.anchorMax = new Vector2(0, 1f);
@@ -20,7 +22,7 @@ public class Day_2021_02_Anim : DayAnimationScript
         float depth = 0, pos = 0, aim = 0;
         float maxDepth = 0, maxPos = 0;
 
-        int counter = 20;   // add this counter to not make all input but just a sample
+        int counter = cycles;   // add this counter to not make all input but just a sample
 
         #region calculations
         foreach (string command in input.Split('\n'))
@@ -64,24 +66,26 @@ public class Day_2021_02_Anim : DayAnimationScript
         }
         #endregion
 
-        if (maxDepth > maxPos)
-        {
-            float ratio = maxDepth / maxPos; // Mathf.Min(maxDepth / maxPos, 2f);
-            Submarine.parent.GetComponent<UnityEngine.UI.AspectRatioFitter>().aspectRatio = ratio;
-            //Submarine.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width * ratio - 100f, Submarine.parent.GetComponent<RectTransform>().sizeDelta.y);
-            maxPos = maxDepth;// /ratio;
-        }
-        else
-        {
-            Submarine.parent.GetComponent<UnityEngine.UI.AspectRatioFitter>().aspectRatio = 1f;
-            maxDepth = Mathf.Max(maxDepth, maxPos); // to ensure playing on square
-            //maxPos = Mathf.Max(maxDepth, maxPos);   // to ensure playing on square
-        }
-        
+        //if (maxDepth > maxPos)
+        //{
+        //    float ratio = maxDepth / maxPos; // Mathf.Min(maxDepth / maxPos, 2f);
+        //    Submarine.parent.GetComponent<UnityEngine.UI.AspectRatioFitter>().aspectRatio = ratio;
+        //    //Submarine.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width * ratio - 100f, Submarine.parent.GetComponent<RectTransform>().sizeDelta.y);
+        //    maxPos = maxDepth;// /ratio;
+        //}
+        //else
+        //{
+        //    Submarine.parent.GetComponent<UnityEngine.UI.AspectRatioFitter>().aspectRatio = 1f;
+        //    maxDepth = Mathf.Max(maxDepth, maxPos); // to ensure playing on square
+        //    //maxPos = Mathf.Max(maxDepth, maxPos);   // to ensure playing on square
+        //}
+        maxDepth = Mathf.Max(maxDepth, maxPos); // to ensure playing on square
+        maxPos = Mathf.Max(maxDepth, maxPos);   // to ensure playing on square
+
         yield return new WaitForEndOfFrame();
         Submarine.gameObject.SetActive(true);
 
-        counter = 20; depth = 0; aim = 0; pos = 0;   // reset values
+        counter = cycles; depth = 0; aim = 0; pos = 0;   // reset values
         foreach (string command in input.Split('\n'))
         {
             string[] cmds = command.Split(' ');
@@ -92,12 +96,12 @@ public class Day_2021_02_Anim : DayAnimationScript
                 case "up": 
                     aim -= val;
                     DisplayLabel.text = "Command : " + command + System.Environment.NewLine + "Position: " + pos + System.Environment.NewLine + "Depth: " + depth + System.Environment.NewLine + "Aim: " + aim;
-                    yield return coRotate(Mathf.Rad2Deg * Mathf.Acos(1f / aim));
+                    yield return coRotate(Mathf.Rad2Deg * Mathf.Atan(aim));
                     break;
                 case "down":
                     aim += val;
                     DisplayLabel.text = "Command : " + command + System.Environment.NewLine + "Position: " + pos + System.Environment.NewLine + "Depth: " + depth + System.Environment.NewLine + "Aim: " + aim;
-                    yield return coRotate(Mathf.Rad2Deg * Mathf.Acos(1f/aim));
+                    yield return coRotate(Mathf.Rad2Deg * Mathf.Atan(aim));
                     break;   
                 case "forward":
                     pos += val;
@@ -115,7 +119,7 @@ public class Day_2021_02_Anim : DayAnimationScript
             if (counter <= 0)
                 break;
 
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
@@ -145,7 +149,7 @@ public class Day_2021_02_Anim : DayAnimationScript
         BubbleSpawner.enabled = false;
     }
 
-    const float ROTATION_SPEED = 0.2f;
+    const float ROTATION_SPEED = 0.3f;
     IEnumerator coRotate(float to)
     {
         float startTime = Time.time;
