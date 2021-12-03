@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DayScript : MonoBehaviour
+public class DayScript2021 : MonoBehaviour
 {
     public bool IsDebug = false;
     public bool IsTestInput = false;

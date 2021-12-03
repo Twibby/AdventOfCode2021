@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Day_2021_02 : DayScript
+public class Day_2021_02 : DayScript2021
 {
 
     protected override string part_1()

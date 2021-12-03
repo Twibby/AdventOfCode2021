@@ -128,9 +128,7 @@ public class Day_2021_02_Anim : DayAnimationScript
     IEnumerator coTranslate(Vector2 to)
     {
         Vector2 from = Submarine.anchorMin;
-        Debug.LogWarning(from.ToString() + " -> " + to.ToString());
 
-        // todo activate bubbles
         BubbleSpawner.enabled = true;
 
         float t0 = Time.time;
@@ -145,7 +143,6 @@ public class Day_2021_02_Anim : DayAnimationScript
         Submarine.anchorMin = to;
         Submarine.anchorMax = to;
 
-        // todo disables bubbles
         BubbleSpawner.enabled = false;
     }
 
