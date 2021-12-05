@@ -21,7 +21,7 @@ public class Day_2021_03 : DayScript2021
             lineCount++;
         }
 
-        string gammaBin = "", epsilonBin = "";
+        string gammaBin = ""; //, epsilonBin = "";
         foreach (int cnt in counts)
         {
             gammaBin += (2 * cnt > lineCount) ? "1" : "0";
@@ -82,6 +82,15 @@ public class Day_2021_03 : DayScript2021
         return (O2capacity * CO2rating).ToString();
     }
 
+    /// <summary>
+    /// Takes a list of binary numbers (string format) eg "01101011", all same size, and a bit position
+    /// Then returns if there is more 1 or not at that position
+    /// eg {"101", "011", "111"}, position 0 -> there are 2 1 and 1 0, so returns true
+    /// Returns true if it's equal
+    /// </summary>
+    /// <param name="numbers">List of binary numbers (in string format), they should all have same length</param>
+    /// <param name="position">int that refers to bit position we're looking for. must be less than all numbers length</param>
+    /// <returns>True if more 1 than 0 at position in numbers</returns>
     private bool isMostCommonBit1(List<string> numbers, int position)
     {
         int count1 = 0;
