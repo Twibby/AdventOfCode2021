@@ -56,7 +56,7 @@ public class DayScript2021 : MonoBehaviour
 
             log += " | Ended at " + Time.realtimeSinceStartup;
             log += " | Part 1 duration is : " + (Time.realtimeSinceStartup - t0).ToString();
-            if (IsDebug)
+            if (IsDebug || (Time.realtimeSinceStartup - t0) > 5f)
                 Debug.Log(log);
 
             Debug.LogWarning("[Day " + _day.ToString() + "] Part 1 result is : " + result);

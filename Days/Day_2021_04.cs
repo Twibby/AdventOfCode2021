@@ -12,14 +12,9 @@ public class Day_2021_04 : DayScript2021
         Queue<int> pickedNumbers = new Queue<int>(_input.Substring(0, _input.IndexOf('\n')).Split(',').Select(int.Parse).ToList());
 
         List<BingoBoard> boards = new List<BingoBoard>();
-        int index = 0;  // to debug boards
         foreach (string boardInput in _input.Substring(_input.IndexOf('\n') + 2).Split(new string[] { "\n\n" }, System.StringSplitOptions.RemoveEmptyEntries))
         {
-            if (index == 7)
-                debugText.text = " " + boardInput + " ";
-
-            boards.Add(new BingoBoard(boardInput, index, (index == 7)));
-            index++;
+            boards.Add(new BingoBoard(boardInput));
         }
         
         pickedText.text = "";
@@ -31,7 +26,7 @@ public class Day_2021_04 : DayScript2021
 
             foreach (BingoBoard board in boards)
             {
-                int score = board.BingoStep(currentNumber, board.index == 7);
+                int score = board.BingoStep(currentNumber);
                 if (score > 0) 
                 {
                     bingoScore = score * currentNumber;
@@ -81,13 +76,10 @@ public class Day_2021_04 : DayScript2021
 
     class BingoBoard
     {
-        public int index;   // for debug purpose
         List<List<int>> rowsAndColumns;
 
-        public BingoBoard(string pInput, int pIndex = -1, bool debug = false)
+        public BingoBoard(string pInput, bool debug = false)
         {
-            this.index = pIndex;
-
             if (debug)
                 Debug.LogWarning(pInput);
 
