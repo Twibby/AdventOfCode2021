@@ -176,6 +176,18 @@ public class Day_2021_08 : DayScript2021
         return int.Parse(code);
     }
 
+    /// <summary>
+    /// get a string containing all "7-segment display" that are on and return digit associated
+    /// Segments are labelled as followed:
+    ///     a
+    ///   b   c
+    ///     d
+    ///   e   f
+    ///     g
+    ///  For example if c and f are on (input is "cf" or "fc"), it returns 1. 0 is all except 'd'
+    /// </summary>
+    /// <param name="digitSegments"></param>
+    /// <returns></returns>
     public string GetDigitFromSegments(string digitSegments)
     {
         string sortedSegments = System.String.Concat(digitSegments.OrderBy(c => c));    // sort alphabetically
