@@ -6,7 +6,6 @@ public class Day_2021_22 : DayScript2021
 {
     protected override string part_1()
     {
-        long count = 0;
         List<Cuboid> cubes = new List<Cuboid>();
         foreach (string instruction in _input.Split('\n'))
         {
