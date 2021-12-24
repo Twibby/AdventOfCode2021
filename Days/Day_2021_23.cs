@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Day_2021_23 : DayScript2021
 {
@@ -13,19 +14,21 @@ public class Day_2021_23 : DayScript2021
     {
         int score = 0;
 
-        State startState = new State("00000000000", new List<Room>() { new Room("CDDC", 'A'), new Room("BCBD", 'B'), new Room("ABAA", 'C'), new Room("DACB", 'D') });
-        State goalState = new State("00000000000", new List<Room>() { new Room("AAAA", 'A'), new Room("BBBB", 'B'), new Room("CCCC", 'C'), new Room("DDDD", 'D') });
+        State startState = new State("00000000000", new List<Room>() { new Room("CDDC", 'A'), new Room("BCBD", 'B'), new Room("ABAA", 'C'), new Room("DACB", 'D') }, new List<string>());
+        State goalState = new State("00000000000", new List<Room>() { new Room("AAAA", 'A'), new Room("BBBB", 'B'), new Room("CCCC", 'C'), new Room("DDDD", 'D') }, new List<string>());
 
-        
+        //State startState = new State("00000000000", new List<Room>() { new Room("CC", 'A', 2), new Room("BD", 'B', 2), new Room("AA", 'C', 2), new Room("DB", 'D', 2) });
+        //State goalState = new State("00000000000", new List<Room>() { new Room("AA", 'A', 2), new Room("BB", 'B', 2), new Room("CC", 'C', 2), new Room("DD", 'D', 2) });
+
         HashSet<State> statesDone = new HashSet<State>();
         Dictionary<State, int> statesWithCost = new Dictionary<State, int>();
         statesWithCost.Add(startState, 0);
 
-        List<KeyValuePair<State,int>> statesToDo = new List<KeyValuePair<State, int>>();
+        List<KeyValuePair<State, int>> statesToDo = new List<KeyValuePair<State, int>>();
         statesToDo.Add(new KeyValuePair<State, int>(startState, 0));
 
-        int safetyCount = 20000;
-        while (statesToDo.Count > 0 && safetyCount > 0)
+        int safetyCount = 0;
+        while (statesToDo.Count > 0 && safetyCount < 1000000)
         {
             // deal with first state
             State currentState = statesToDo[0].Key;
@@ -49,11 +52,7 @@ public class Day_2021_23 : DayScript2021
             statesToDo.RemoveAt(0);
             statesToDo.Sort(delegate (KeyValuePair<State, int> a, KeyValuePair<State, int> b) { return a.Value.CompareTo(b.Value); });
 
-            Debug.Log("Count : " + statesToDo.Count + System.Environment.NewLine + System.String.Join("\n", statesToDo.ConvertAll<string>(x => x.Key.ToString() + " with cost " + x.Value)));
-
-            UnityEditor.EditorApplication.isPaused = true;
-
-            safetyCount--;
+            safetyCount++;
         }
 
         if (safetyCount <= 0)
@@ -61,10 +60,10 @@ public class Day_2021_23 : DayScript2021
         else if (statesToDo.Count == 0)
             Debug.LogError("no more possible states, weird");
         else
-            return statesToDo[0].Value.ToString();
+            Debug.Log(statesToDo[0].Value.ToString());
 
-        statesToDo.Sort(delegate (KeyValuePair<State, int> a, KeyValuePair<State, int> b) { return a.Key.hallway.CompareTo(b.Key.hallway); });
-        Debug.Log("Count : " + statesToDo.Count + System.Environment.NewLine + System.String.Join("\n", statesToDo.ConvertAll<string>(x => x.Key.ToString() + " with cost " + x.Value)));
+
+        Debug.Log("MEMORY IS : " + System.Environment.NewLine + System.String.Join(System.Environment.NewLine, statesToDo[0].Key.memory));
 
         return score.ToString();
     }
@@ -75,10 +74,13 @@ public class Day_2021_23 : DayScript2021
         public char type;
         public int index { get { return (int)(this.type - 'A'); } }
 
-        public Room(string pRoomContent, char pType)
+        public int size;
+
+        public Room(string pRoomContent, char pType, int pSize = 4)
         {
             this.roomContent = pRoomContent;
             this.type = pType;
+            this.size = pSize;
         }
         public Room(Room copy)
         {
@@ -86,12 +88,12 @@ public class Day_2021_23 : DayScript2021
             this.type = copy.type;
         }
 
-        public bool IsEmpty() { return this.roomContent == "0000"; }
+        public bool IsEmpty() { return this.roomContent.Trim(new char[] { '0' }).Length == 0; }
         public bool IsFull() { return !this.roomContent.Contains("0"); }
 
-        public bool IsCleared() 
+        public bool IsCleared()
         {
-            foreach (char c in this.roomContent) { if (c != type) { return false; } }
+            foreach (char c in this.roomContent) { if (c != '0' && c != type) { return false; } }
             return true;
         }
 
@@ -102,7 +104,7 @@ public class Day_2021_23 : DayScript2021
         /// <summary>
         /// returns room with 1 correct char entering in it (in lower place)
         /// </summary>
-        public (Room,int) Push()
+        public (Room, int) Push()
         {
             int index = this.roomContent.LastIndexOf('0');
             if (index < 0)
@@ -110,9 +112,9 @@ public class Day_2021_23 : DayScript2021
 
             this.roomContent = this.roomContent.Substring(0, index) + type + (index < roomContent.Length - 1 ? roomContent.Substring(index + 1) : "");
 
-            Debug.Log("Pushing in room " + this.type + " => " + this.roomContent);
+            //Debug.Log("Pushing in room " + this.type + " => " + this.roomContent);
 
-            return (this, index+1);
+            return (this, index + 1);
         }
 
         public (Room, char, int) Pop()
@@ -122,18 +124,15 @@ public class Day_2021_23 : DayScript2021
                 return (this, '0', 0);
 
             int index = this.roomContent.LastIndexOf('0');
-            if (index >= roomContent.Length-1)
+            if (index >= roomContent.Length - 1)
                 throw new System.Exception("bluh " + this.roomContent + " / " + this.type);
 
-            //if (index >= 0)
-            //    Debug.Log(this.roomContent);
+            char c = roomContent[index + 1];
+            this.roomContent = (index < 0 ? "" : this.roomContent.Substring(0, index + 1)) + '0' + (index < roomContent.Length - 2 ? roomContent.Substring(index + 2) : "");
 
-            char c = roomContent[index+1];
-            this.roomContent = (index < 0 ? "" : this.roomContent.Substring(0, index+1)) + '0' + (index < roomContent.Length - 2 ? roomContent.Substring(index + 2) : "");
+            //Debug.Log("poping out " + c + " of room " + this.type + " => " + this.roomContent);
 
-            Debug.Log("poping out " + c + " of room " + this.type + " => " + this.roomContent);
-
-            return (this, c, index+2);
+            return (this, c, index + 2);
         }
     }
 
@@ -141,16 +140,19 @@ public class Day_2021_23 : DayScript2021
     {
         public string hallway;
         public List<Room> rooms;
-        public string roomsHash {  get { return System.String.Join("", rooms); } }
+        public string roomsHash { get { return System.String.Join("", rooms); } }
 
         private List<int> roomPosition = new List<int>() { 2, 4, 6, 8 };
+        public List<string> memory;
 
         #region constructor & overrides
-        public State(string pHallway, List<Room> pRooms)
+        public State(string pHallway, List<Room> pRooms, List<string> pMemory)
         {
             this.hallway = pHallway;
             this.rooms = new List<Room>();
             foreach (Room room in pRooms) { this.rooms.Add(new Room(room)); }
+            this.memory = pMemory;
+            this.memory.Add(this.ToString());
         }
 
         public override string ToString()
@@ -184,9 +186,9 @@ public class Day_2021_23 : DayScript2021
                 {
                     int cost = 0;
 
-                    string tmpHallway = hallway.Substring(0, pos) + '0' + (pos < hallway.Length-1 ? hallway.Substring(pos+1) : "");
+                    string tmpHallway = hallway.Substring(0, pos) + '0' + (pos < hallway.Length - 1 ? hallway.Substring(pos + 1) : "");
                     List<Room> tmpRooms = new List<Room>();
-                    for (int i=0; i < rooms.Count; i++)
+                    for (int i = 0; i < rooms.Count; i++)
                     {
                         if (rooms[i].type != c)
                             tmpRooms.Add(new Room(rooms[i]));
@@ -195,12 +197,12 @@ public class Day_2021_23 : DayScript2021
                             (Room, int) r = new Room(rooms[i]).Push();
                             tmpRooms.Add(r.Item1);
 
-                            int movingCount = r.Item2 + Mathf.Abs(pos - this.roomPosition[r.Item1.index]);
-                            cost = (int)Mathf.Pow(10, costValue(c)) * movingCount;
+                            int movingCount = r.Item2 + System.Math.Abs(pos - this.roomPosition[r.Item1.index]);
+                            cost = (int)System.Math.Pow(10, costValue(c)) * movingCount;
                         }
-                    }                   
+                    }
 
-                    result.Add(new KeyValuePair<State, int>(new State(tmpHallway, tmpRooms), cost));
+                    result.Add(new KeyValuePair<State, int>(new State(tmpHallway, tmpRooms, new List<string>(this.memory)), cost));
                 }
             }
 
@@ -220,7 +222,7 @@ public class Day_2021_23 : DayScript2021
                     if (val.Item2 == '0')
                         continue;
 
-                    string tmpHallway = hallway.Substring(0, availableExitPos) + val.Item2 + (availableExitPos < hallway.Length - 1 ? hallway.Substring(availableExitPos+ 1) : "");
+                    string tmpHallway = hallway.Substring(0, availableExitPos) + val.Item2 + (availableExitPos < hallway.Length - 1 ? hallway.Substring(availableExitPos + 1) : "");
                     List<Room> tmpRooms = new List<Room>();
                     for (int i = 0; i < rooms.Count; i++)
                     {
@@ -229,11 +231,11 @@ public class Day_2021_23 : DayScript2021
                         else
                             tmpRooms.Add(new Room(val.Item1));
 
-                        int movingCount = val.Item3 + Mathf.Abs(availableExitPos - this.roomPosition[val.Item1.index]);
-                        cost = (int)Mathf.Pow(10, costValue(val.Item2)) * movingCount;
+                        int movingCount = val.Item3 + System.Math.Abs(availableExitPos - this.roomPosition[val.Item1.index]);
+                        cost = (int)System.Math.Pow(10, costValue(val.Item2)) * movingCount;
                     }
 
-                    result.Add(new KeyValuePair<State, int>(new State(tmpHallway, tmpRooms), cost));
+                    result.Add(new KeyValuePair<State, int>(new State(tmpHallway, tmpRooms, new List<string>(this.memory)), cost));
                 }
             }
 
@@ -260,7 +262,7 @@ public class Day_2021_23 : DayScript2021
         List<int> getAvailablePos(int index)
         {
             List<int> result = new List<int>();
-            for (int i = index+1; i < hallway.Length; i++)  // to the right;
+            for (int i = index + 1; i < hallway.Length; i++)  // to the right;
             {
                 if (hallway[i] != '0')
                     break;
