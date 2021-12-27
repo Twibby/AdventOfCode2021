@@ -121,3 +121,18 @@ public class Tools2021 : MonoBehaviour
         }
     }
 }
+
+public class IntVector2
+{
+    public int x;
+    public int y;
+
+    public IntVector2(int x, int y) { this.x = x; this.y = y; }
+    public static IntVector2 zero { get { return new IntVector2(0, 0); } }
+    public static IntVector2 one { get { return new IntVector2(1, 1); } }
+
+    public override string ToString()
+    {
+        return "(" + x + "," + y + ")";
+    }
+}
